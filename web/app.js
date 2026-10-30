@@ -60,6 +60,17 @@ $("#profile-btn").addEventListener("click", async () => {
   if (!p.findings.length) $("#statuses").insertAdjacentHTML("beforeend", '<span class="hint">개념 신호를 찾지 못했습니다. 대화 맥락만으로 추천합니다.</span>');
 });
 
+// 지어낸 예시 피드백. 처음 보는 사람이 분석 결과를 바로 볼 수 있게 한다
+const FEEDBACK_EXAMPLE = `해시 충돌 처리를 설명할 때 체이닝이 헷갈려서 오래 걸렸습니다.
+LRU 캐시는 이번에 처음 알게 되었어요.
+Git 브랜치는 이미 잘 알고 막힘없이 설명했습니다.`;
+
+$("#feedback-example").addEventListener("click", () => {
+  if (!$("#learner").value.trim()) $("#learner").value = "학습자A";
+  $("#feedback").value = FEEDBACK_EXAMPLE;
+  updateStart();
+});
+
 function updateStart() {
   $("#start-btn").disabled = !($("#learner").value.trim() && $("#consent-a").checked && $("#consent-b").checked);
 }
@@ -125,6 +136,8 @@ $("#manual").addEventListener("submit", (e) => {
   onUtterance(text);
 });
 
+document.querySelectorAll("[data-line]").forEach((btn) => btn.addEventListener("click", () => onUtterance(btn.dataset.line)));
+
 // ---- 추천 ----
 
 function addLine(text) {
@@ -138,6 +151,9 @@ async function onUtterance(text) {
   addLine(text);
   state.lines.push(text);
   const { cards } = await api("/api/analyze", { learner: state.learner, lines: state.lines.slice(-WINDOW) });
+  const miss = $("#no-match");
+  miss.hidden = cards.length > 0;
+  miss.textContent = "최근 대화에서 아는 개념을 찾지 못했습니다. 아래 예시처럼 개념 이름과 값을 넣어 보세요. 예: “해시표에 5, 15, 25 넣고 25를 찾으면 몇 번 비교해?”";
   mergeCards(cards);
 }
 
@@ -167,6 +183,7 @@ function showRefresh(card) {
 function renderCards() {
   const list = $("#cards");
   list.innerHTML = "";
+  $("#cards-empty").hidden = state.cards.length > 0;
   for (const card of state.cards) {
     const li = document.createElement("li");
     li.className = `card ${card.fresh ? "fresh" : ""} ${state.active === card.concept_id ? "active" : ""}`;

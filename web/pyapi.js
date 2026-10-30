@@ -49,7 +49,7 @@ def handle(method, path, body_json):
     if (!el) {
       el = document.createElement("div");
       el.id = "pyapi-banner";
-      el.style.cssText = "position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:9999;padding:8px 14px;border-radius:8px;font-size:13px;box-shadow:0 2px 10px rgba(0,0,0,.12)";
+      el.style.cssText = "position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:9999;width:max-content;max-width:calc(100% - 32px);padding:8px 14px;border-radius:8px;font-size:13px;box-shadow:0 2px 10px rgba(0,0,0,.12)";
       document.body.append(el);
     }
     el.style.background = isError ? "#fff0e6" : "#e8efff";
@@ -69,11 +69,19 @@ def handle(method, path, body_json):
   }
 
   async function startEngine() {
-    banner("브라우저에서 파이썬 엔진을 불러오는 중입니다. 처음 한 번 10초 남짓 걸립니다.");
+    // 서버 없이 추천 코드를 돌리려고 브라우저에 파이썬을 내려받는다. 무엇을 하는지와 걸린 시간을 보여 준다
+    const started = Date.now();
+    let stage = "";
+    const show = () => banner(`추천 엔진 준비 중 · ${stage} · ${Math.round((Date.now() - started) / 1000)}초 (처음 한 번 10초 남짓, 끝나면 이 알림이 사라집니다)`);
+    const tick = setInterval(show, 1000);
+    const step = (text) => { stage = text; show(); };
     try {
+      step("1/3 브라우저용 파이썬 내려받기");
       await loadScript(PYODIDE + "pyodide.js");
       const py = await window.loadPyodide({ indexURL: PYODIDE });
+      step("2/3 필요한 패키지 설치");
       await py.loadPackage("pydantic");
+      step("3/3 추천 코드 불러오기");
       py.FS.mkdirTree("/home/pyodide/app");
       for (const m of MODULES) {
         const res = await realFetch(new URL(`../app/${m}.py`, location.href));
@@ -84,8 +92,10 @@ def handle(method, path, body_json):
       banner("");
       return py.globals.get("handle");
     } catch (err) {
-      banner(`파이썬 엔진을 불러오지 못했습니다: ${err.message}`, true);
+      banner(`추천 엔진을 불러오지 못했습니다(${err.message}). 새로고침해 보세요.`, true);
       throw err;
+    } finally {
+      clearInterval(tick);
     }
   }
 

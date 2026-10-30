@@ -13,35 +13,59 @@
     <a href="./" class="nav">평가 화면으로</a>
   </header>
 
+  <section class="panel intro">
+    <p>동료 평가 대화를 듣고, 지금 이야기하는 개념의 시각화를 추천하는 서비스입니다.
+      학습자마다 지난 동료 평가 피드백이 달라서, <b>같은 대화를 넣어도 1순위와 시작 단계가 갈립니다.</b></p>
+    <ol class="steps">
+      <li>아래 두 학습자의 지난 피드백과, 거기서 뽑은 개념별 상태(헷갈림·새로 앎·익숙함)를 봅니다.</li>
+      <li>대본 버튼 <b>① → ② → ③</b>을 차례로 누릅니다. 두 사람에게 같은 말이 들어갑니다.</li>
+      <li>주황색 띠와 아래 두 칸에서 무엇이 갈렸는지 봅니다. 추천 카드를 누르면 그 시각화가 열립니다.</li>
+    </ol>
+  </section>
+
   <section class="compare-setup">
     <div class="panel learner" data-side="a">
-      <h2>학습자 A</h2>
-      <textarea rows="4">해시 충돌을 체이닝으로 설명할 때 헷갈려서 한참 헤맸습니다.
+      <h2>학습자 A의 지난 피드백</h2>
+      <textarea rows="3">해시 충돌을 체이닝으로 설명할 때 헷갈려서 한참 헤맸습니다.
 LRU는 처음 들어 봤어요.</textarea>
       <div class="statuses"></div>
     </div>
     <div class="panel learner" data-side="b">
-      <h2>학습자 B</h2>
-      <textarea rows="4">해시표 충돌과 체이닝은 이미 잘 알고 막힘없이 설명했습니다.
+      <h2>학습자 B의 지난 피드백</h2>
+      <textarea rows="3">해시표 충돌과 체이닝은 이미 잘 알고 막힘없이 설명했습니다.
 LRU 캐시 교체 순서가 헷갈렸어요.</textarea>
       <div class="statuses"></div>
     </div>
   </section>
-  <p class="hint compare-hint">위 글은 지난 동료 평가 피드백입니다. 바꾸면 다시 분석합니다. 이 화면은 아무것도 저장하지 않습니다.</p>
+  <p class="hint compare-hint">지어낸 예시 피드백입니다. 글을 고치면 다시 분석합니다. 이 화면은 아무것도 저장하지 않습니다.</p>
 
   <section class="panel talk-bar">
-    <form id="say" class="manual">
-      <input id="say-text" type="text" placeholder="두 사람에게 같은 대화를 넣습니다">
-      <button type="submit">보내기</button>
-    </form>
+    <h2>대본 — 차례로 누르세요</h2>
     <div class="script">
-      <span class="hint">대본:</span>
-      <button type="button" class="secondary" data-line="해시 테이블에 삼이랑 십삼 넣으면 같은 칸이잖아">① 해시 충돌</button>
-      <button type="button" class="secondary" data-line="LRU 캐시는 해시맵이랑 연결 리스트로 만든다며?">② LRU는 해시맵으로</button>
-      <button type="button" class="secondary" data-line="LRU 캐시 용량 3에 A, B, C 넣고 A 조회하고 D 넣으면?">③ LRU 교체</button>
-      <button type="button" class="secondary" id="reset">처음부터</button>
+      <button type="button" class="step-btn" data-line="해시 테이블에 삼이랑 십삼 넣으면 같은 칸이잖아">
+        <span class="label">① 해시 충돌</span>
+        <span class="say">“해시 테이블에 삼이랑 십삼 넣으면 같은 칸이잖아”</span>
+        <span class="look">볼 것: 둘 다 해시표지만 시작 단계가 다릅니다. 헷갈렸던 A는 충돌 장면부터, 익숙한 B는 긴 체인부터.</span>
+      </button>
+      <button type="button" class="step-btn" data-line="LRU 캐시는 해시맵이랑 연결 리스트로 만든다며?">
+        <span class="label">② LRU는 해시맵으로</span>
+        <span class="say">“LRU 캐시는 해시맵이랑 연결 리스트로 만든다며?”</span>
+        <span class="look">볼 것: 1순위가 갈립니다. A는 아직 헷갈리는 해시표, B는 헷갈렸던 LRU.</span>
+      </button>
+      <button type="button" class="step-btn" data-line="LRU 캐시 용량 3에 A, B, C 넣고 A 조회하고 D 넣으면?">
+        <span class="label">③ LRU 교체</span>
+        <span class="say">“LRU 캐시 용량 3에 A, B, C 넣고 A 조회하고 D 넣으면?”</span>
+        <span class="look">볼 것: 둘 다 LRU가 대화의 값(용량 3, A·B·C·D)으로 열립니다. 처음 들은 A는 기본 단계, 헷갈렸던 B는 헷갈리기 쉬운 단계부터.</span>
+      </button>
     </div>
     <ol id="talk-log" class="talk-log"></ol>
+    <form id="say" class="manual">
+      <input id="say-text" type="text" placeholder="직접 넣기 — 예: 해시표에 5, 15, 25 넣고 25를 찾으면 몇 번 비교해?">
+      <button type="button" id="example" class="secondary">예시 넣기</button>
+      <button type="submit">보내기</button>
+    </form>
+    <p class="hint">알아듣는 개념: 해시표·LRU 캐시(시각화), 힙·Git 브랜치·커밋 DAG·JOIN·IAM(확인 질문 카드). 최근 세 마디를 묶어 판단합니다.
+      <button type="button" class="link" id="reset">처음부터 다시</button></p>
   </section>
 
   <p id="diff" class="diff" hidden></p>

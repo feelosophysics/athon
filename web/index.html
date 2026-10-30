@@ -15,15 +15,29 @@
   </header>
 
   <section id="setup" class="panel">
+    <div class="intro">
+      <p>실제 동료 평가 때 켜 두는 화면입니다. 대화를 들으며 지금 이야기하는 개념의 시각화를 추천 카드로 띄우고,
+        피평가자의 지난 피드백에 맞춘 단계로 엽니다. 이 데모는 녹음 대신 <b>글로 대화를 넣습니다</b>.</p>
+      <ol class="steps">
+        <li>피평가자 이름을 아무거나 넣습니다(예: 학습자A).</li>
+        <li><b>피드백 예시 채우기</b> → <b>피드백 분석</b>을 누르면 개념별 상태가 칩으로 뜹니다. 건너뛰어도 됩니다.</li>
+        <li>녹음 동의 두 칸을 체크하고 <b>평가 시작</b>을 누릅니다.</li>
+        <li>대화 예시 버튼을 누르거나 직접 입력하면 오른쪽에 추천 카드가 쌓입니다. 카드를 누르면 가운데에 열립니다.</li>
+      </ol>
+      <p class="hint">두 학습자를 나란히 비교하려면 위의 <a href="compare.html">두 학습자 비교</a>로 가세요.</p>
+    </div>
     <h2>평가 준비</h2>
     <label>피평가자 이름(이 기기에서 기록을 찾는 데만 쓴다)
       <input id="learner" type="text" maxlength="40" placeholder="예: 학습자A">
     </label>
-    <details>
+    <details id="feedback-box" open>
       <summary>지난 동료 평가 피드백 붙여넣기 (선택)</summary>
       <p class="hint">평가 화면의 피드백 글을 그대로 붙여넣으세요. 이름은 지우고, 개념별 상태만 저장합니다. 피드백 원문은 저장하지 않습니다.</p>
-      <textarea id="feedback" rows="6"></textarea>
-      <button id="profile-btn" type="button">피드백 분석</button>
+      <textarea id="feedback" rows="4" placeholder="예: 해시 충돌 처리를 설명할 때 체이닝이 헷갈려서 오래 걸렸습니다."></textarea>
+      <div class="row">
+        <button id="feedback-example" type="button" class="secondary">피드백 예시 채우기</button>
+        <button id="profile-btn" type="button">피드백 분석</button>
+      </div>
     </details>
     <div id="statuses" class="statuses"></div>
     <fieldset class="consent">
@@ -43,9 +57,20 @@
       </div>
       <ol id="transcript"></ol>
       <form id="manual" class="manual">
-        <input id="manual-text" type="text" placeholder="대화를 글로 입력 (STT가 없을 때)">
+        <input id="manual-text" type="text" placeholder="예: 해시 테이블에 삼이랑 십삼 넣으면 같은 칸이잖아">
         <button type="submit">보내기</button>
       </form>
+      <p id="no-match" class="empty-note" hidden></p>
+      <div class="examples">
+        <span class="hint">대화 예시 — 누르면 바로 들어갑니다</span>
+        <button type="button" class="secondary" data-line="해시 테이블에 삼이랑 십삼 넣으면 같은 칸이잖아">해시 충돌</button>
+        <button type="button" class="secondary" data-line="해시표에 5, 15, 25 넣고 25를 찾으면 몇 번 비교해?">해시 찾기</button>
+        <button type="button" class="secondary" data-line="LRU 캐시 용량 3에 A, B, C 넣고 A 조회하고 D 넣으면?">LRU 교체</button>
+        <button type="button" class="secondary" data-line="브랜치 만들면 커밋을 가리키는 포인터만 생기는 거지?">Git 브랜치</button>
+        <button type="button" class="secondary" data-line="두 테이블을 외래 키로 JOIN하면">JOIN</button>
+        <button type="button" class="secondary" data-line="TTL 만료 시간을 힙으로 관리하면">힙 TTL</button>
+      </div>
+      <p class="hint">알아듣는 개념: 해시표·LRU 캐시는 시각화, 힙·Git 브랜치·커밋 DAG·JOIN·IAM은 확인 질문 카드. 숫자는 “삼이랑 십삼”처럼 한글로, 키는 “에이, 비”처럼 말해도 됩니다.</p>
       <button id="end-btn" type="button" class="secondary">평가 끝내기</button>
     </section>
 
@@ -64,6 +89,7 @@
 
     <aside class="cards panel">
       <h2>추천</h2>
+      <p id="cards-empty" class="empty-note">아직 추천이 없습니다. 왼쪽 대화 예시 버튼을 눌러 보세요.</p>
       <ol id="cards"></ol>
     </aside>
   </main>
