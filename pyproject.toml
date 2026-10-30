@@ -1,0 +1,23 @@
+[project]
+name = "concept-viz"
+version = "0.1.0"
+description = "동료 평가 대화에 맞춰 개념 시각화를 추천한다"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "pydantic>=2.7",
+    "httpx>=0.27",
+    "python-multipart>=0.0.9",
+]
+
+[project.optional-dependencies]
+# L4 서버에서만 설치한다: uv sync --extra stt
+stt = ["faster-whisper>=1.0"]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
